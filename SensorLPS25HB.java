@@ -69,7 +69,7 @@ public class SensorLPS25HB {
      * @throws IOException
      */
     public SensorLPS25HB setRefPressure(int pr) throws IOException {
-        if (pr < 0 | pr > 4095) throw new IllegalArgumentException("Value out of range.");
+        if (pr < 0 || pr > 4095) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(4);
         buf.order(ByteOrder.LITTLE_ENDIAN)
             .putInt(0,pr*4096)
@@ -94,7 +94,7 @@ public class SensorLPS25HB {
      * @throws IOException
      */
     public SensorLPS25HB setAVGT(int avg) throws IOException{
-        if (avg < 0 | avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
+        if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
@@ -119,7 +119,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setAVGP(int avg) throws IOException{
-        if (avg < 0 | avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
+        if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
@@ -163,7 +163,7 @@ public class SensorLPS25HB {
      * @throws IOException
      */
     public SensorLPS25HB setODR(int rate) throws IOException{
-        if (rate < 0 | rate > 4) throw new IllegalArgumentException("Value must be in range 0-4");
+        if (rate < 0 || rate > 4) throw new IllegalArgumentException("Value must be in range 0-4");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -445,7 +445,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setIntMode(int mode) throws IOException{
-        if (mode < 0 | mode > 3) throw new IllegalArgumentException("Value out of range.");
+        if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x22,1,buf);
@@ -471,7 +471,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setIntDataSigConf(int config) throws IOException{
-        if (config < 0 | config > 15) throw new IllegalArgumentException("Value out of range");
+        if (config < 0 || config > 15) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         buf.put(0,(byte)config);
         dev = DeviceManager.open(conf);
@@ -516,7 +516,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setIntDiffConf(int mode) throws IOException{
-        if (mode < 0 | mode > 3) throw new IllegalArgumentException("Value out of range");
+        if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x24,1,buf);
@@ -544,7 +544,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setFIFOMode(int mode) throws IOException{
-        if (mode < 0 | mode == 5 | mode > 7) throw new IllegalArgumentException("Value out of range.");
+        if (mode < 0 || mode == 5 || mode > 7) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2e,1,buf);
@@ -562,7 +562,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setFIFOWatermark (int value) throws IOException{
-        if (value < 0 | value > 31) throw new IllegalArgumentException("Value out of range");
+        if (value < 0 || value > 31) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2e,1,buf);
@@ -580,7 +580,7 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setIntTreshold(int value) throws IOException{
-        if (value < 0 | value > 4095) throw new IllegalArgumentException("Value out of range");
+        if (value < 0 || value > 4095) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(4);
         buf.order(ByteOrder.LITTLE_ENDIAN).putInt(0,value*16).limit(2);
         dev = DeviceManager.open(conf);
