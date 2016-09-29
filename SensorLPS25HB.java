@@ -88,7 +88,7 @@ public class SensorLPS25HB {
 
         public final int value;
 
-        private TemperatureResolutionSamples(int value) {
+        private TemperatureResolution(int value) {
             this.value = value;
         }
     }
@@ -204,9 +204,9 @@ public class SensorLPS25HB {
     
     /**Sets the Block Data Update bit to the desired value.
      * <p>The BDU bit is used to inhibit the output register update between the reading of the upper
-     * and lower register parts. In default mode (BDU = ‘0’), the lower and upper register parts are
+     * and lower register parts. In default mode (BDU = �?0’), the lower and upper register parts are
      * updated continuously. If it is not certain whether the read will be faster than output data rate,
-     * it is recommended to set the BDU bit to ‘1’. In this way, after the reading of the lower (upper)
+     * it is recommended to set the BDU bit to �?1’. In this way, after the reading of the lower (upper)
      * register part, the content of that output register is not updated until the upper (lower) part is
      * read also.
      * 
@@ -316,7 +316,7 @@ public class SensorLPS25HB {
     }
     
     /**Decimate the ODR of the device to 1Hz while it in FIFO Mean mode.
-     * <p>When this bit is ‘1’, the output is decimated to 1 Hz as the moving average is being taken at
+     * <p>When this bit is �?1’, the output is decimated to 1 Hz as the moving average is being taken at
      * the rate of the ODR. Otherwise, averaged pressure data will be updated according to the
      * ODR defined.
      * @param enable
