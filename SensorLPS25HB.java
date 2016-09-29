@@ -79,26 +79,34 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
-    public static final int TMP_RES_8 = 0;
-    public static final int TMP_RES_16 = 1;
-    public static final int TMP_RES_32 = 2;
-    public static final int TMP_RES_64 = 3;
+
+    public enum TemperatureResolution {
+        _8(0),
+        _16(1),
+        _32(2),
+        _64(3);
+
+        public final int value;
+
+        private TemperatureResolutionSamples(int value) {
+            this.value = value;
+        }
+    }
     
     /**Sets the temperature resolution.
      * <p>Use TMP_RES_n static constants where n is the number of samples
      * averaged.
      *
-     * @param avg One of the TMP_RES_n constants.
-     * @return
+     * @param samples One of the TemperatureResolution enum units
+     * @return this
      * @throws IOException
      */
-    public SensorLPS25HB setAVGT(int avg) throws IOException {
-        if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
+    public SensorLPS25HB setAVGT(TemperatureResolution samples) throws IOException {
+        if (samples.value < 0 || samples.value > 3) throw new IllegalArgumentException("Value must be in range 0-3");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1111_0011 | (avg << 2));
+        byte reg = (byte) (buf.get(0) & 0b1111_0011 | (samples.value << 2));
         buf.put(0,reg).rewind();
         dev.write(0x10,1,buf);
         dev.close();
