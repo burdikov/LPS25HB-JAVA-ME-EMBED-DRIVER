@@ -7,7 +7,7 @@ import jdk.dio.i2cbus.I2CDeviceConfig;
 
 /**
  *
- * @author Леонид Бурдиков, leonid.b.d@gmail.com
+ * @author Leonid Burdikov, leonid.b.d@gmail.com
  */
 public class SensorLPS25HB {
     private I2CDevice dev;
@@ -16,8 +16,7 @@ public class SensorLPS25HB {
     private boolean oneshot = false;
     
     
-    /**Constucts new instance of this class.
-     * 
+    /**
      * @param controllerNumber Number of I2C Bus controller (1 by default).
      * @param clockFrequency Frequency of the bus. Either 100000 or 400000 Hz.
      * @param address Address of the device on the bus. 92 or 93.
@@ -29,7 +28,7 @@ public class SensorLPS25HB {
                 setClockFrequency(clockFrequency).build();
     }
     
-    /**Constructs new instance of this class.
+    /**
      * <p>Controller number is set to 1, clock frequency is set to 100000.
      * @param address Address of the device on the bus. 92 or 93.
      */
@@ -37,7 +36,7 @@ public class SensorLPS25HB {
         this(1, 100000, address);
     }
     
-    /**Constructs new instance of this class. 
+    /**
      * <p>Controller number is set to 1, clock frequency is set to 100000
      * and address of the device is set to 92.
      */
@@ -94,10 +93,10 @@ public class SensorLPS25HB {
     }
     
     /**Sets the temperature resolution.
-     * <p>Use TMP_RES_n static constants where n is the number of samples
-     * averaged.
+     * <p>Defines number od samples averaged whenever a new data is acquired by
+     * sensor.
      *
-     * @param samples One of the TemperatureResolution enum units
+     * @param samples One of the TemperatureResolution enum units.
      * @return this
      * @throws IOException
      */
@@ -112,25 +111,32 @@ public class SensorLPS25HB {
         return this;
     }
     
-    public static final int PRS_RES_8 = 0;
-    public static final int PRS_RES_32 = 1;
-    public static final int PRS_RES_128 = 2;
-    public static final int PRS_RES_256 = 3;
+    public enum PressureResolution{
+        _8(0),
+        _32(1),
+        _128(2),
+        _256(3);
+        
+        public final int value;
+        
+        PressureResolution(int value){
+            this.value = value;
+        }
+    }
     
     /**Sets the pressure resolution.
-     * <p>Use PRS_RES_n static constants where n is the number of samples
-     * averaged.
+     * <p>Defines the number of samples averaged whenever a new data is aquired
+     * by sensor.
      * 
-     * @param avg One of the PRS_RES_n constants.
-     * @return
+     * @param samples One of the PressureResolution enum units.
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setAVGP(int avg) throws IOException {
-        if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
+    public SensorLPS25HB setAVGP(PressureResolution samples) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1111_1100 | avg);
+        byte reg = (byte) (buf.get(0) & 0b1111_1100 | samples.value);
         buf.put(0,reg).rewind();
         dev.write(0x10,1,buf);
         dev.close();
