@@ -22,7 +22,7 @@ public class SensorLPS25HB {
      * @param clockFrequency Frequency of the bus. Either 100000 or 400000 Hz.
      * @param address Address of the device on the bus. 92 or 93.
      */
-    SensorLPS25HB(int controllerNumber, int clockFrequency, int address){
+    SensorLPS25HB(int controllerNumber, int clockFrequency, int address) {
         conf = new I2CDeviceConfig.Builder().
                 setControllerNumber(controllerNumber).
                 setAddress(address, I2CDeviceConfig.ADDR_SIZE_7).
@@ -50,7 +50,7 @@ public class SensorLPS25HB {
      * @return -67
      * @throws IOException
      */
-    public byte whoAmI() throws IOException{
+    public byte whoAmI() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x0F,1,buf);
@@ -79,26 +79,33 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
-    public static final int TMP_RES_8 = 0;
-    public static final int TMP_RES_16 = 1;
-    public static final int TMP_RES_32 = 2;
-    public static final int TMP_RES_64 = 3;
+
+    public enum TemperatureResolution {
+        _8(0),
+        _16(1),
+        _32(2),
+        _64(3);
+
+        public final int value;
+
+        private TemperatureResolutionSamples(int value) {
+            this.value = value;
+        }
+    }
     
     /**Sets the temperature resolution.
      * <p>Use TMP_RES_n static constants where n is the number of samples
      * averaged.
      *
-     * @param avg One of the TMP_RES_n constants.
-     * @return
+     * @param samples One of the TemperatureResolution enum units
+     * @return this
      * @throws IOException
      */
-    public SensorLPS25HB setAVGT(int avg) throws IOException{
-        if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
+    public SensorLPS25HB setAVGT(TemperatureResolution samples) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1111_0011 | (avg << 2));
+        byte reg = (byte) (buf.get(0) & 0b1111_0011 | (samples.value << 2));
         buf.put(0,reg).rewind();
         dev.write(0x10,1,buf);
         dev.close();
@@ -118,7 +125,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setAVGP(int avg) throws IOException{
+    public SensorLPS25HB setAVGP(int avg) throws IOException {
         if (avg < 0 || avg > 3) throw new IllegalArgumentException("Value must be in range 0-3");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
@@ -137,7 +144,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setPower(boolean enable) throws IOException{
+    public SensorLPS25HB setPower(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -162,7 +169,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException
      */
-    public SensorLPS25HB setODR(int rate) throws IOException{
+    public SensorLPS25HB setODR(int rate) throws IOException {
         if (rate < 0 || rate > 4) throw new IllegalArgumentException("Value must be in range 0-4");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
@@ -183,7 +190,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setDiffIntGeneration(boolean enable) throws IOException{
+    public SensorLPS25HB setDiffIntGeneration(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -208,7 +215,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setBDU(boolean enable) throws IOException{
+    public SensorLPS25HB setBDU(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -225,7 +232,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB resetAutoZero() throws IOException{
+    public SensorLPS25HB resetAutoZero() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -242,7 +249,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */ 
-    public SensorLPS25HB setSIM(boolean threeWire) throws IOException{
+    public SensorLPS25HB setSIM(boolean threeWire) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
@@ -259,7 +266,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB reboot() throws IOException{
+    public SensorLPS25HB reboot() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -276,7 +283,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setFIFO(boolean enable) throws IOException{
+    public SensorLPS25HB setFIFO(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -296,7 +303,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setStopOnFTH(boolean enable) throws IOException{
+    public SensorLPS25HB setStopOnFTH(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -316,7 +323,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setFifoMeanDec(boolean enable) throws IOException{
+    public SensorLPS25HB setFifoMeanDec(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -334,7 +341,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setI2C(boolean enable) throws IOException{
+    public SensorLPS25HB setI2C(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -353,7 +360,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB swReset() throws IOException{
+    public SensorLPS25HB swReset() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -372,7 +379,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setAutoZero(boolean enable) throws IOException{
+    public SensorLPS25HB setAutoZero(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -400,7 +407,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setIntHighLow(boolean high) throws IOException{
+    public SensorLPS25HB setIntHighLow(boolean high) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x22,1,buf);
@@ -418,7 +425,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setPP_OD(boolean pp) throws IOException{
+    public SensorLPS25HB setPP_OD(boolean pp) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x22,1,buf);
@@ -444,7 +451,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setIntMode(int mode) throws IOException{
+    public SensorLPS25HB setIntMode(int mode) throws IOException {
         if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
@@ -470,7 +477,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setIntDataSigConf(int config) throws IOException{
+    public SensorLPS25HB setIntDataSigConf(int config) throws IOException {
         if (config < 0 || config > 15) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         buf.put(0,(byte)config);
@@ -490,7 +497,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setLIR(boolean enable) throws IOException{
+    public SensorLPS25HB setLIR(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x24,1,buf);
@@ -501,7 +508,7 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
+
     public static final int INT_DIF_NOINT = 0;
     public static final int INT_DIF_HIGH = 1;
     public static final int INT_DIF_LOW = 2;
@@ -515,7 +522,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setIntDiffConf(int mode) throws IOException{
+    public SensorLPS25HB setIntDiffConf(int mode) throws IOException {
         if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
@@ -526,14 +533,22 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
-    public static final int FIFO_MD_BYPASS = 0;
-    public static final int FIFO_MD_FIFO = 1;
-    public static final int FIFO_MD_STREAM = 2;
-    public static final int FIFO_MD_STR_TO_FIFO = 3;
-    public static final int FIFO_MD_BYP_TO_STR = 4;
-    public static final int FIFO_MD_MEAN = 6;
-    public static final int FIFO_MD_BYP_TO_FIFO = 7;
+
+    public enum FIFOMode {
+        BYPASS(0),
+        FIFO(1),
+        STREAM(2),
+        STR_TO_FIFO(3),
+        BYP_TO_STR(4),
+        MEAN(6),
+        BYP_TO_FIFO(7);
+
+        public final int value;
+
+        private FIFOMode(int value) {
+            this.value = value;
+        }
+    }
     
     /**Set FIFO operating mode.
      * <p>FIFO can operate in 7 different modes: bypass, FIFO, stream, stream-to-FIFO,
@@ -543,12 +558,11 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setFIFOMode(int mode) throws IOException{
-        if (mode < 0 || mode == 5 || mode > 7) throw new IllegalArgumentException("Value out of range.");
+    public SensorLPS25HB setFIFOMode(FIFOMode mode) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2e,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b0001_1111 | (mode << 5));
+        byte reg = (byte) (buf.get(0) & 0b0001_1111 | (mode.value << 5));
         buf.put(0,reg).rewind();
         dev.write(0x2e,1,buf);
         dev.close();
@@ -561,7 +575,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setFIFOWatermark (int value) throws IOException{
+    public SensorLPS25HB setFIFOWatermark (int value) throws IOException {
         if (value < 0 || value > 31) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
@@ -579,7 +593,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setIntTreshold(int value) throws IOException{
+    public SensorLPS25HB setIntTreshold(int value) throws IOException {
         if (value < 0 || value > 4095) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(4);
         buf.order(ByteOrder.LITTLE_ENDIAN).putInt(0,value*16).limit(2);
@@ -595,7 +609,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public byte getFIFOStatus() throws IOException{
+    public byte getFIFOStatus() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2f,1,buf);
@@ -609,7 +623,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public byte getIntSource() throws IOException{
+    public byte getIntSource() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x25,1,buf);
@@ -624,7 +638,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public double[] getFIFOData() throws IOException{
+    public double[] getFIFOData() throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         
         dev = DeviceManager.open(conf);
@@ -686,7 +700,7 @@ public class SensorLPS25HB {
      * @throws IOException
      * @throws InterruptedException 
      */
-    public double[] getData() throws IOException, InterruptedException{
+    public double[] getData() throws IOException, InterruptedException {
         ByteBuffer pbuf = ByteBuffer.allocateDirect(3);
         ByteBuffer tbuf = ByteBuffer.allocateDirect(2);
         ByteBuffer intbuf = ByteBuffer.allocateDirect(4);
@@ -739,7 +753,7 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setPresOffset(short offset) throws IOException{
+    public SensorLPS25HB setPresOffset(short offset) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(2);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         buf.putShort(0,offset);
