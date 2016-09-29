@@ -168,6 +168,20 @@ public class SensorLPS25HB {
     public static final int ODR_12p5 = 3;
     public static final int ODR_25 = 4;
     
+    public enum ODR{
+        ONESHOT(0),
+        _1(1),
+        _7(2),
+        _12_5(3),
+        _25(4);
+    
+        public final int value;
+        
+        ODR(int value){
+            this.value = value;
+        }
+    }
+    
     /**Sets the Output Data Rate of the device.
      * <p>Use the ODR_n static constants where n is the value in Hz.
      * <p>When ODR is set to one shot device is not gathering samples by itself.
