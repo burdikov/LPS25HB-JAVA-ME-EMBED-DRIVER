@@ -102,7 +102,6 @@ public class SensorLPS25HB {
      * @throws IOException
      */
     public SensorLPS25HB setAVGT(TemperatureResolution samples) throws IOException {
-        if (samples.value < 0 || samples.value > 3) throw new IllegalArgumentException("Value must be in range 0-3");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x10,1,buf);
@@ -560,7 +559,6 @@ public class SensorLPS25HB {
      * @throws IOException 
      */
     public SensorLPS25HB setFIFOMode(FIFOMode mode) throws IOException {
-        if (mode.value < 0 || mode.value == 5 || mode.value > 7) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2e,1,buf);
