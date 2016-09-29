@@ -162,17 +162,29 @@ public class SensorLPS25HB {
         return this;
     }
     
-    public static final int ODR_ONESHOT = 0;
-    public static final int ODR_1 = 1;
-    public static final int ODR_7 = 2;
-    public static final int ODR_12p5 = 3;
-    public static final int ODR_25 = 4;
-    
+    /**
+     * Contains possible ODR values.
+     */
     public enum ODR{
+        /**
+         * Device is set to one shot mode.
+         */
         ONESHOT(0),
+        /**
+         * Device is acquiring data at 1 Hz.
+         */
         _1(1),
+        /**
+         * Device is acquiring data at 7 Hz.
+         */
         _7(2),
+        /**
+         * Device is acquiring data at 12.5 Hz.
+         */
         _12_5(3),
+        /**
+         * Device is acquiring data at 25 Hz.
+         */
         _25(4);
     
         public final int value;
@@ -189,16 +201,15 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException
      */
-    public SensorLPS25HB setODR(int rate) throws IOException {
-        if (rate < 0 || rate > 4) throw new IllegalArgumentException("Value must be in range 0-4");
+    public SensorLPS25HB setODR(ODR rate) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x20,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1000_1111 | (rate << 4));
+        byte reg = (byte) (buf.get(0) & 0b1000_1111 | (rate.value << 4));
         buf.put(0,reg).rewind();
         dev.write(0x20,1,buf);
         dev.close();
-        oneshot = rate == 0;
+        oneshot = rate.value == 0;
         return this;
     }
     
