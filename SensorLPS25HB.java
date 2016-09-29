@@ -501,7 +501,7 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
+
     public static final int INT_DIF_NOINT = 0;
     public static final int INT_DIF_HIGH = 1;
     public static final int INT_DIF_LOW = 2;
@@ -526,14 +526,22 @@ public class SensorLPS25HB {
         dev.close();
         return this;
     }
-    
-    public static final int FIFO_MD_BYPASS = 0;
-    public static final int FIFO_MD_FIFO = 1;
-    public static final int FIFO_MD_STREAM = 2;
-    public static final int FIFO_MD_STR_TO_FIFO = 3;
-    public static final int FIFO_MD_BYP_TO_STR = 4;
-    public static final int FIFO_MD_MEAN = 6;
-    public static final int FIFO_MD_BYP_TO_FIFO = 7;
+
+    public enum FIFOMode {
+        BYPASS(0),
+        FIFO(1),
+        STREAM(2),
+        STR_TO_FIFO(3),
+        BYP_TO_STR(4),
+        MEAN(6),
+        BYP_TO_FIFO(7);
+
+        public final int value;
+
+        private FIFOMode(int value) {
+            this.value = value;
+        }
+    }
     
     /**Set FIFO operating mode.
      * <p>FIFO can operate in 7 different modes: bypass, FIFO, stream, stream-to-FIFO,
@@ -543,12 +551,12 @@ public class SensorLPS25HB {
      * @return
      * @throws IOException 
      */
-    public SensorLPS25HB setFIFOMode(int mode) throws IOException{
-        if (mode < 0 || mode == 5 || mode > 7) throw new IllegalArgumentException("Value out of range.");
+    public SensorLPS25HB setFIFOMode(FIFOMode mode) throws IOException{
+        if (mode.value < 0 || mode.value == 5 || mode.value > 7) throw new IllegalArgumentException("Value out of range.");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x2e,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b0001_1111 | (mode << 5));
+        byte reg = (byte) (buf.get(0) & 0b0001_1111 | (mode.value << 5));
         buf.put(0,reg).rewind();
         dev.write(0x2e,1,buf);
         dev.close();
