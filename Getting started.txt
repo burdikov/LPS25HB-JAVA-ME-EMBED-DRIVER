@@ -1,0 +1,129 @@
+There is an example of using this driver.
+
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.microedition.midlet.MIDlet;
+import jdk.dio.DeviceManager;
+import jdk.dio.gpio.GPIOPin;
+import jdk.dio.gpio.GPIOPinConfig;
+import jdk.dio.gpio.PinEvent;
+import jdk.dio.gpio.PinListener;
+import SomeClass.SensorLPS25HB.*;
+
+/**
+ *
+ * @author Leonid Burdikov, leonid.b.d@gmail.com
+ */
+public class SomeClass extends MIDlet {
+    
+    private SensorLPS25HB sens;
+    
+    @Override
+    public void startApp() {
+        
+        //create new instance
+        //on the X-NUCLEO-IKS01A1 this sensor has address 93
+        sens = new SensorLPS25HB(93); //like this
+        
+        //SensorLPS25HB sens = new SensorLPS25HB(1, 400000, 93); or like this
+        try {
+            //apply general settings to it
+            sens
+                    .setAVGP(PressureResolution._256) //pressure
+                    .setAVGT(TemperatureResolution._64) //and temperature resolution
+                    .setBDU(true) //block data update
+                    .setODR(ODR._1); //output data rate
+                    
+            //configure FIFO
+            sens
+                    .setFIFO(true) //enable it
+                    .setFIFOMode(FIFOMode.FIFO); //set operating mode
+            
+            //configure interrupts to the Differential events generation
+            sens
+                    .setDiffIntGeneration(true) //enable differential interrupts
+                    .setInterruptPinMode(InterruptPinMode.PRESSURE_HIGH_OR_LOW) //this needed to pass differential interrupts on int pin
+                    .setDifferentialInterruptConfig(DifferentialInterruptMode.PRESSURE_HIGH) 
+                                    //this needed to generate interrupt on differential pressure high event
+                    .setIntTreshold(50); //set treshold to 50 HPa.
+            
+            //or to the Data signal events generation
+            sens
+                    .setInterruptPinMode(InterruptPinMode.DATA_SIGNAL)
+                    .setInterruptDataSignalConfig(
+                            InterruptDataSignalConfig.DATA_READY.value | 
+                            InterruptDataSignalConfig.FIFO_EMPTY.value | 
+                            InterruptDataSignalConfig.FIFO_OVERRUN.value);
+                    
+            
+            //Set up a listener
+            GPIOPin pin = DeviceManager.open(
+                    new GPIOPinConfig.Builder()
+                            .setDirection(GPIOPinConfig.DIR_INPUT_ONLY)
+                            .setTrigger(GPIOPinConfig.TRIGGER_RISING_EDGE)
+                            .setControllerNumber(7)
+                            .setPinNumber(6)
+                    .build()
+            ); //int pin conf on stm32f746g
+
+            pin.setInputListener(new listr());
+            
+            //enable the sensor and autozero fuction
+            sens.
+                    setPower(true).
+                    setAutoZero(true);
+
+            //get data from the sensor
+            double[] data;
+            
+            for (int i = 0; i < 10; i++) {
+                Thread.sleep(32000); //time needed to FIFO to fill
+                data = sens.getFIFOData();
+                for (int j = 0; j < data.length; j++) {
+                    //some actions with the data
+                    //data[j] = ... //this is the pressure
+                    //data[++j] = ... //this is the corresponding temperature
+                }
+            }
+            
+            sens.setPower(false);
+        } catch (IOException ex) {
+            System.out.println("Man, something went wrong!");
+        } catch (InterruptedException ex) {
+            System.out.println("oops");
+        }
+    }
+    
+    private class listr implements PinListener{
+
+        @Override
+        public void valueChanged(PinEvent event) {
+            try {
+                //cooperate code here with the interrupt generation mode you set
+                //earlier
+
+                //use next methods to get information about interrupt
+                byte fifoStatus = sens.getFIFOStatus();  
+                byte intSource = sens.getIntSource();
+                //refer to documentation to learn about each bit in that registers
+                //search: "lps25hb datasheet"
+                
+                //react on interrupt
+                if ((intSource & 0b0000_0010) == 2){
+                    System.out.println("Wow! Differential pressure high event occured!");
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Just_another_proj.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }
+        
+    }
+    
+    
+    @Override
+    public void destroyApp(boolean unconditional) {
+        
+    }
+}
