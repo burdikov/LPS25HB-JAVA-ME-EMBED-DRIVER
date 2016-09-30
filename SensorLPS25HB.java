@@ -64,7 +64,7 @@ public class SensorLPS25HB {
      * this value.
      *
      * @param pr Reference pressure in hPa. 0 - 4095.
-     * @return
+     * @return this
      * @throws IOException
      */
     public SensorLPS25HB setRefPressure(int pr) throws IOException {
@@ -79,10 +79,25 @@ public class SensorLPS25HB {
         return this;
     }
 
+    /**
+     * Contains possible temperature resolution values measured in samples.
+     */
     public enum TemperatureResolution {
+        /**
+         * 8 samples will be averaged at each data aquisition.
+         */
         _8(0),
+        /**
+         * 16 samples will be averaged at each data aquisition.
+         */
         _16(1),
+        /**
+         * 32 samples will be averaged at each data aquisition.
+         */
         _32(2),
+        /**
+         * 64 samples will be averaged at each data aquisition.
+         */
         _64(3);
 
         public final int value;
@@ -96,7 +111,7 @@ public class SensorLPS25HB {
      * <p>Defines number od samples averaged whenever a new data is acquired by
      * sensor.
      *
-     * @param samples One of the TemperatureResolution enum units.
+     * @param samples One of the {@link TemperatureResolution} enum units.
      * @return this
      * @throws IOException
      */
@@ -111,10 +126,25 @@ public class SensorLPS25HB {
         return this;
     }
     
+    /**
+     * Contains possible pressure resolution values measured in samples.
+     */
     public enum PressureResolution{
+        /**
+         * 8 samples will be averaged at each data aquisition.
+         */
         _8(0),
+        /**
+         * 32 samples will be averaged at each data aquisition.
+         */
         _32(1),
+        /**
+         * 128 samples will be averaged at each data aquisition.
+         */
         _128(2),
+        /**
+         * 256 samples will be averaged at each data aquisition.
+         */
         _256(3);
         
         public final int value;
@@ -128,7 +158,7 @@ public class SensorLPS25HB {
      * <p>Defines the number of samples averaged whenever a new data is aquired
      * by sensor.
      * 
-     * @param samples One of the PressureResolution enum units.
+     * @param samples One of the {@link PressureResolution} enum units.
      * @return this
      * @throws IOException 
      */
@@ -147,7 +177,7 @@ public class SensorLPS25HB {
      * <p>This bit allows the turn on of the device. The device is in power-down
      * mode after boot by default.
      * @param enable True - power on.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setPower(boolean enable) throws IOException {
@@ -163,7 +193,7 @@ public class SensorLPS25HB {
     }
     
     /**
-     * Contains possible ODR values.
+     * Contains possible ODR values in Hz.
      */
     public enum ODR{
         /**
@@ -195,10 +225,9 @@ public class SensorLPS25HB {
     }
     
     /**Sets the Output Data Rate of the device.
-     * <p>Use the ODR_n static constants where n is the value in Hz.
      * <p>When ODR is set to one shot device is not gathering samples by itself.
-     * @param rate One of the ODR_n constants.
-     * @return
+     * @param rate One of the {@link ODR} enum units.
+     * @return this
      * @throws IOException
      */
     public SensorLPS25HB setODR(ODR rate) throws IOException {
@@ -218,7 +247,7 @@ public class SensorLPS25HB {
      * value and reference pressure exceeds treshold.
      * 
      * @param enable True - int generation enabled.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setDiffIntGeneration(boolean enable) throws IOException {
@@ -243,7 +272,7 @@ public class SensorLPS25HB {
      * 
      * <p>This feature prevents the reading of LSB and MSB related to different samples.
      * @param enable True - BDU enabled.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setBDU(boolean enable) throws IOException {
@@ -260,7 +289,7 @@ public class SensorLPS25HB {
     
     /**Resets the AutoZero function of the device.
      * <p>Clears the reference pressure register and disables autozero function.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB resetAutoZero() throws IOException {
@@ -277,7 +306,7 @@ public class SensorLPS25HB {
     /**Select the SPI serial interface mode.
      * <p>4-wire either 3-wire.
      * @param threeWire True - 3-wire.
-     * @return
+     * @return this
      * @throws IOException 
      */ 
     public SensorLPS25HB setSIM(boolean threeWire) throws IOException {
@@ -294,7 +323,7 @@ public class SensorLPS25HB {
     
     /**Refresh the content of the internal registers.
      * 
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB reboot() throws IOException {
@@ -311,7 +340,7 @@ public class SensorLPS25HB {
     /**Enable or disable FIFO using.
      * 
      * @param enable True - FIFO enabled.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setFIFO(boolean enable) throws IOException {
@@ -331,10 +360,10 @@ public class SensorLPS25HB {
      * This flag is set in FIFO_STATUS register and can be checked using
      * {@link getFIFOStatus()}.
      * @param enable
-     * @return
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setStopOnFTH(boolean enable) throws IOException {
+    public SensorLPS25HB setStopOnFifoTreshold(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -351,10 +380,10 @@ public class SensorLPS25HB {
      * the rate of the ODR. Otherwise, averaged pressure data will be updated according to the
      * ODR defined.
      * @param enable
-     * @return
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setFifoMeanDec(boolean enable) throws IOException {
+    public SensorLPS25HB setFifoMeanDecimate(boolean enable) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x21,1,buf);
@@ -369,7 +398,7 @@ public class SensorLPS25HB {
     /**Enable or disable using of I2C.
      * 
      * @param enable
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setI2C(boolean enable) throws IOException {
@@ -386,9 +415,9 @@ public class SensorLPS25HB {
     
     /**Software reset.
      * <p>The device is reset to the power-on configuration after
-     * SWRESET bit is set to '1'. The software reset process takes 4 μsec. When BOOT follows,
+     * SWRESET bit is set to '1'. The software reset process takes 4 msec. When BOOT follows,
      * the recommended sequence is SWRESET first and then BOOT.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB swReset() throws IOException {
@@ -407,7 +436,7 @@ public class SensorLPS25HB {
      * REF_P_L (09h) and REF_P_XL (08h). When this bit is enabled, the register content of
      * REF_P is subtracted from the pressure output value.
      * @param enable True - enabled.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setAutoZero(boolean enable) throws IOException {
@@ -435,7 +464,7 @@ public class SensorLPS25HB {
     /**Set the active level on the int pin.
      * 
      * @param high True - high.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setIntHighLow(boolean high) throws IOException {
@@ -453,7 +482,7 @@ public class SensorLPS25HB {
     /**Set selection mode on int pin.
      * <p>Either push-pull or open drain.
      * @param pp True - push-pull.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setPP_OD(boolean pp) throws IOException {
@@ -468,47 +497,98 @@ public class SensorLPS25HB {
         return this;
     } 
     
-    public static final int INT_MD_DATA_SIG = 0;
-    public static final int INT_MD_PHIGH = 1;
-    public static final int INT_MD_PLOW = 2;
-    public static final int INT_MD_PHIGH_OR_PLOW = 3;
+    /**
+     * Contains the modes responsive for signal source on interrupt pin.
+     */
+    public enum InterruptPinMode{
+        /**
+         * In this mode device sends interrupts when one or more events 
+         * configured by {@link setInterruptDataSignalConfig()} occur.
+         */
+        DATA_SIGNAL(0),
+        /**
+         * In this mode device sends interrupts when differential pressure high
+         * event occurs.
+         */
+        PRESSURE_HIGH(1),
+        /** 
+         * In this mode device sends interrupts when differential pressure low
+         * event occurs.
+         */
+        PRESSURE_LOW(2),
+        /**
+         * In this mode device sends interrupts when either differential pressure
+         * low or differential pressure high event occur.
+         */
+        PRESSURE_HIGH_OR_LOW(3);
+        
+        public final int value;
+        
+        InterruptPinMode(int value){
+            this.value = value;
+        }
+    }
     
-    /**Data signal on interrupt pin control.
-     * <p>Device can generate next signals on int pin:
+    /**Decide which type of signals will be passed on interrupt pin.
+     * <p>Device can pass next signals on int pin from internal sources:
      * <p>Data signal - data ready and FIFO events;
      * <p>Pressure high, pressure low, pressure high or low - when differential
      * pressure interrupt is generated.
-     * @param mode One of the INT_MD static constants.
-     * @return
+     * @param mode One of the {@link InterruptPinMode} enum units.
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setIntMode(int mode) throws IOException {
-        if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range.");
+    public SensorLPS25HB setInterruptPinMode(InterruptPinMode mode) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x22,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1111_1100 | mode);
+        byte reg = (byte) (buf.get(0) & 0b1111_1100 | mode.value);
         buf.put(0,reg).rewind();
         dev.write(0x22,1,buf);
         dev.close();
         return this;
     }
     
-    public static final int INT_DS_F_EMPTY = 8;
-    public static final int INT_DS_F_FTH = 4;
-    public static final int INT_DS_F_OVR = 2;
-    public static final int INT_DS_DRDY = 1;
+    /**
+     * Contains events on which interrupt can be generated in data signal mode.
+     */
+    public enum InterruptDataSignalConfig{
+        /**
+         * Interrupt will be generated whenever FIFO is empty.
+         */
+        FIFO_EMPTY(8),
+        /**
+         * Interrupt will be generated when FIFO reaches specified watermark.
+         */
+        FIFO_TRESHOLD(4),
+        /**
+         * Interrupt will be generated when FIFO is full in FIFO mode or 
+         * overrun occured in stream mode.
+         */
+        FIFO_OVERRUN(2),
+        /**
+         * Interrupt will be generated when a new data is available.
+         */
+        DATA_READY(1);
+        
+        public final int value;
+        
+        InterruptDataSignalConfig(int value){
+            this.value = value;
+        }
+    }
     
     /**Specify events on which interrupt will be generated in Data Signal mode.
      * <p>Four different events can be specified: FIFO is empty, FIFO is filled
-     * to the watermark level, FIFO is full if FIFO mode of overrun occured in
+     * to the watermark level, FIFO is full if FIFO mode or overrun occured in
      * Stream mode, new data is available.
-     * <p>Use this when INT_MD_DATA_SIG is set.
-     * @param config Bitwise combination of one or more INT_DS static constants.
-     * @return
+     * <p>Use this when device passing data signal interrupts ({@link setInterruptPinMode()}).
+     * @param config Bitwise combination of one or more {@link InterruptDataSignalConfig}
+     * unit.value's.
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setIntDataSigConf(int config) throws IOException {
+    public SensorLPS25HB setInterruptDataSignalConfig(int config) throws IOException {
         if (config < 0 || config > 15) throw new IllegalArgumentException("Value out of range");
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         buf.put(0,(byte)config);
@@ -525,7 +605,7 @@ public class SensorLPS25HB {
      * pressure exceeds the treshold, so that you can not know later whether
      * was an interrupt or not.
      * @param enable True - enabled.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setLIR(boolean enable) throws IOException {
@@ -540,39 +620,114 @@ public class SensorLPS25HB {
         return this;
     }
 
-    public static final int INT_DIF_NOINT = 0;
-    public static final int INT_DIF_HIGH = 1;
-    public static final int INT_DIF_LOW = 2;
-    public static final int INT_DIF_HIGH_LOW = 3;
+    /**
+     * Contains modes responsive for differential pressure interrupts generation.
+     */
+    public enum DifferentialInterruptMode{
+        /**
+         * Interrupt generation is disabled.
+         */
+        NO_INTERRUPT(0),
+        /**
+         * Interrupt will be generated when differential pressure high event occur.
+         */
+        PRESSURE_HIGH(1),
+        /**
+         * Interrupt will be generated when differential pressure low event occur.
+         */
+        PRESSURE_LOW(2),
+        /**
+         * Interrupt will be generated when either differential pressure low or
+         * differential pressure high events occur.
+         */
+        PRESSURE_HIGH_OR_LOW(3);
+        
+        public final int value;
+        
+        DifferentialInterruptMode(int value){
+            this.value = value;
+        }
+    }
     
     /**Specify on which events differential pressure interrupt will be generated.
      * <p>Device can generate interrupts when differential pressure is lower than
      * treshold (low pressure event) or higher than treshold (high pressure event).
      * <p>Use this when other option then INT_MD_DATA_SIG is set.
-     * @param mode One of the INT_DIF static constants.
-     * @return
+     * @param mode One of the {@link DifferentialInterruptMode} enum units.
+     * @return this
      * @throws IOException 
      */
-    public SensorLPS25HB setIntDiffConf(int mode) throws IOException {
-        if (mode < 0 || mode > 3) throw new IllegalArgumentException("Value out of range");
+    public SensorLPS25HB setDifferentialInterruptConfig(DifferentialInterruptMode mode) throws IOException {
         ByteBuffer buf = ByteBuffer.allocateDirect(1);
         dev = DeviceManager.open(conf);
         dev.read(0x24,1,buf);
-        byte reg = (byte) (buf.get(0) & 0b1111_1100 | mode);
+        byte reg = (byte) (buf.get(0) & 0b1111_1100 | mode.value);
         buf.put(0,reg).rewind();
         dev.write(0x24,1,buf);
         dev.close();
         return this;
     }
 
+    /**
+     * Contains FIFO operating modes.
+     */
     public enum FIFOMode {
+        /**
+         * In bypass mode, FIFO is not operational and remains empty.
+         */
         BYPASS(0),
+        /**
+         * In FIFO mode, the data from output registers are stored in the FIFO.
+         * <p>A watermark interrupt can be enabled (see {@link setStopOnFifoTreshold(boolean)}) in order
+         * to be raised when FIFO is filled to the level specified by {@link setFIFOWatermark(int)}.
+         * The FIFO continues filling until it's full (32 slots of data for output).
+         * When full, the FIFO stops collecting data.
+         * <p>The FIFO buffer can store up to 32 levels of data. The FIFO depth 
+         * can be limited by setting the watermark interrupt and by selecting a 
+         * watermark level.
+         */
         FIFO(1),
+        /**
+         * In stream mode, the data from output registers are stored in the FIFO.
+         * The FIFO continues filling until it's full. When full, the FIFO discards
+         * the older data as the newer arrive. An interrupt can be enabled and set
+         * as in FIFO mode.
+         */
         STREAM(2),
-        STR_TO_FIFO(3),
-        BYP_TO_STR(4),
+        /**
+         * In this mode FIFO is operating as in stream mode. An interrupt can be
+         * set as in FIFO mode. Once a trigger event occurs, FIFO starts operating
+         * in FIFO mode.
+         * Interrupt request should be latched in order for proper triggering
+         * (see {@link setLIR(boolean)}).
+         */
+        STREAM_TO_FIFO(3),
+        /**
+         * In this mode the FIFO remains inoperational till the triggering event
+         * occurs and the FIFO starts operating in FIFO mode.
+         */
+        BYPASS_TO_STREAM(4),
+        /**
+         * In FIFO Mean mode the pressure data are not directly sent to the output
+         * register but are stored first in the FIFO to calculate the average. In
+         * this mode the FIFO is used to implement a moving average of the pressure
+         * data with a 2, 4, 8, 16 or 32 sample set by changing the FIFO mean mode
+         * sample size defined by the {@link setFIFOWatermark(int)}.
+         * <p>There are two ways of providing the output pressure data averaged by FIFO:
+         * <p>1. If the output is not decimated (altered by {@link setFifoMeanDecimate(boolean)}),
+         * the output is at the same ODR of the data coming from the sensor.
+         * <p>2. In other case, the output is decimated to the 1 Hz.
+         * <p>Please note that when using the FIFO Mean mode it is not possible 
+         * to access the FIFO content.
+         * <p>Make sure that the watermark value is set to one of 2, 4, 8, 16 or 
+         * before enabling this function.
+         */
         MEAN(6),
-        BYP_TO_FIFO(7);
+        /**
+         * In this mode the FIFO remains inoperational until the triggering event
+         * occurs and the FIFO starts operating in FIFO mode.
+         */
+        BYPASS_TO_FIFO(7);
 
         public final int value;
 
@@ -582,11 +737,12 @@ public class SensorLPS25HB {
     }
     
     /**Set FIFO operating mode.
-     * <p>FIFO can operate in 7 different modes: bypass, FIFO, stream, stream-to-FIFO,
-     * bypass-to-stream, FIFO mean mode and bypass-to-FIFO mode. Read datasheet
-     * of the device to futher information.
-     * @param mode One of the FIFO_MD static constants.
-     * @return
+     * <p>FIFO can operate in 7 different modes.
+     * <p>Note that to several modes which are sensitive to interrupts (e.g. 
+     * Stream-to-FIFO, Bypass-to-Stream) latching interrupt request should be 
+     * enabled to proper triggering (see {@link setLIR{boolean)}.
+     * @param mode One of the FIFOMode enum units.
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setFIFOMode(FIFOMode mode) throws IOException {
@@ -603,7 +759,7 @@ public class SensorLPS25HB {
     /**Set FIFO watermark level.
      * <p>Set the value on which a flag in FIFO_STATUS register will be set.
      * @param value Value in range 0-31.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setFIFOWatermark (int value) throws IOException {
@@ -621,7 +777,7 @@ public class SensorLPS25HB {
     /**Set the treshold for interrupt generation.
      * 
      * @param value Value in hPa in range 0-4095.
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setIntTreshold(int value) throws IOException {
@@ -781,7 +937,7 @@ public class SensorLPS25HB {
     /**Set pressure offset.
      * <p>This is used to implement one-point calibration.
      * @param offset
-     * @return
+     * @return this
      * @throws IOException 
      */
     public SensorLPS25HB setPresOffset(short offset) throws IOException {
